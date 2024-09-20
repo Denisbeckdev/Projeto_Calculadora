@@ -49,36 +49,20 @@ body {
     transition: background-color 0.3s;
 }
 
-button:hover {
-    background-color: #d0d0d0;
-}
-
-.purple-text {
-    background-color: #9c27b0;
+.operacao {
+    background-color: #a3bb8f;
     color: white;
 }
 
-.red-text {
-    background-color: #f44336;
-    color: white;
+.operacao:hover {
+    background-color: #89a570;
 }
 
-.white-text {
-    background-color: #ffffff;
+.numeral {
+    background-color: #d3d3d3;
     color: black;
 }
 
-.brown-text {
-    background-color: #795548;
-    color: white;
-}
-
-.grey-text {
-    background-color: #9e9e9e;
-    color: white;
-}
-
-.green-text {
-    background-color: #4caf50;
-    color: white;
+.numeral:hover {
+    background-color: #b5b5b5;
 }
