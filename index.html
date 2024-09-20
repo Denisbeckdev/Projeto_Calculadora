@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <input id="display" value="0" disabled>
+             <h2 id="history"></h2>
+        </div>
+    
+        <div class="row">
+    <button class="button" onclick="add_numero(7)">7</button>
+    <button class="button" onclick="add_numero(8)">8</button>
+    <button class="button" onclick="add_numero(9)">9</button>
+    <button class="button purple-text" onclick="limpar()">C</button>
+</div>
+<div class="row">
+    <button class="button" onclick="add_numero(4)">4</button>
+    <button class="button" onclick="add_numero(5)">5</button>
+    <button class="button" onclick="add_numero(6)">6</button>
+    <button class="button red-text" onclick="add_operacao('/')">/</button>
+</div>
+<div class="row">
+    <button class="button" onclick="add_numero(1)">1</button>
+    <button class="button" onclick="add_numero(2)">2</button>
+    <button class="button" onclick="add_numero(3)">3</button>
+    <button class="button white-text" onclick="add_operacao('*')">X</button>
+</div>
+<div class="row">
+    <button class="button" onclick="add_numero(0)">0</button>
+    <button class="button brown-text" onclick="calcular()">=</button>
+    <button class="button grey-text" onclick="add_operacao('+')">+</button>
+    <button class="button green-text" onclick="add_operacao('-')">-</button>
+</div>
+
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
