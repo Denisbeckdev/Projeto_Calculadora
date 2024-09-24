@@ -1,62 +1,98 @@
+let operaçãoAtual = '';
 let historico = [];
+const tamanhoMaximoDisplay = 12; 
 
-// Adiciona um número ao visor
-function add_numero(num) {
-    const display = document.getElementById("display");
-    if (display.value === "0") {
-        display.value = num; // Se o visor está em 0, substitui pelo número
-    } else {
-        display.value += num; // Adiciona o número ao visor
+function add_numero(numero) {
+    const display = document.getElementById('display');
+    
+    
+    if (display.value.length < tamanhoMaximoDisplay) {
+        if (display.value === '0') {
+            display.value = numero;
+        } else {
+            display.value += numero;
+        }
     }
 }
 
-// Adiciona uma operação ao visor
-function add_operacao(op) {
-    const display = document.getElementById("display");
-    if (!display.value.endsWith(" ") && display.value !== "0") {
-        display.value += " " + op + " "; // Adiciona operação ao visor
+function add_operacao(operacao) {
+    const display = document.getElementById('display');
+    
+    
+    if (display.value.length < tamanhoMaximoDisplay) {
+        if (operaçãoAtual) {
+            display.value = display.value.slice(0, -1) + operacao;
+        } else {
+            display.value += operacao;
+        }
+        operaçãoAtual = operacao;
     }
 }
 
-// Limpa o visor
-function limpar() {
-    document.getElementById("display").value = "0"; // Reseta o visor
-}
-
-// Calcula a operação atual
 function calcular() {
-    const display = document.getElementById("display");
+    const display = document.getElementById('display');
+    const expressao = display.value;
+
     try {
-        const resultado = eval(display.value); // Avalia a expressão
-        const operacaoCompleta = display.value + " = " + resultado; // Monta a operação completa
-        historico.push(operacaoCompleta); // Adiciona ao histórico
-        atualizar_historico(); // Atualiza a tabela do histórico
-        display.value = resultado; // Exibe o resultado no visor
+        
+        if (!/^[0-9+\-*/(). ]+$/.test(expressao)) {
+            throw new Error("Entrada Inválida");
+        }
+
+        const resultado = eval(expressao);
+
+        if (!isNaN(resultado)) {
+            display.value = resultado.toFixed(2);
+            const agora = new Date();
+            const dataHora = agora.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            });
+            historico.push({ dataHora, expressao });
+            if (historico.length > 4) {
+                historico.shift();
+            }
+            atualizarHistorico();
+        } else {
+            throw new Error("Resultado não é um número");
+        }
+
     } catch (error) {
-        display.value = "ERROR"; // Se ocorrer erro, exibe ERROR
+        display.value = 'Entrada Inválida';
+        console.error(error);
     }
 }
 
-// Atualiza o histórico na tabela
-function atualizar_historico() {
-    const historicoTabela = document.getElementById("historicoTabela").getElementsByTagName("tbody")[0];
-    historicoTabela.innerHTML = ""; // Limpa a tabela atual
-    historico.forEach((item, index) => {
-        const row = historicoTabela.insertRow(); // Cria uma nova linha
-        const cell = row.insertCell(0); // Cria uma nova célula
-        cell.textContent = item; // Adiciona o item do histórico à célula
-        cell.classList.add("historico-item"); // Adiciona a classe para estilização
-        cell.onclick = () => selecionar_historico(index); // Define a função para selecionar o histórico
-    });
+function limpar() {
+    const display = document.getElementById('display');
+    display.value = '0';
+    operaçãoAtual = '';
 }
 
-// Seleciona um item do histórico e o coloca no visor
-function selecionar_historico(index) {
-    const itemHistorico = historico[index]; // Ex: "21:08:11 9 * 3 = 27"
+function atualizarHistorico() {
+    const tabela = document.querySelector('#historicoTabela tbody');
+    tabela.innerHTML = '';
+    historico.forEach(item => {
+        const linha = document.createElement('tr');
 
-    // Extraindo apenas a operação
-    const partes = itemHistorico.split(" = ")[0].trim(); // Obtém a parte antes do '='
+        const celulaDataHora = document.createElement('td');
+        celulaDataHora.textContent = item.dataHora;
 
-    // Atualiza o visor com a operação
-    document.getElementById("display").value = partes; 
+        const celulaExpressao = document.createElement('td');
+        celulaExpressao.textContent = item.expressao;
+
+        linha.addEventListener('click', () => {
+            const display = document.getElementById('display');
+            display.value = item.expressao;
+        });
+
+        linha.appendChild(celulaDataHora);
+        linha.appendChild(celulaExpressao);
+
+        tabela.appendChild(linha);
+    });
 }
