@@ -1,48 +1,62 @@
+let historico = [];
+
+// Adiciona um número ao visor
+function add_numero(num) {
+    const display = document.getElementById("display");
+    if (display.value === "0") {
+        display.value = num; // Se o visor está em 0, substitui pelo número
+    } else {
+        display.value += num; // Adiciona o número ao visor
+    }
+}
+
+// Adiciona uma operação ao visor
+function add_operacao(op) {
+    const display = document.getElementById("display");
+    if (!display.value.endsWith(" ") && display.value !== "0") {
+        display.value += " " + op + " "; // Adiciona operação ao visor
+    }
+}
+
+// Limpa o visor
 function limpar() {
-    document.getElementById("display").value = "0"; // Reseta para "0" ao limpar
-    document.getElementById("history").textContent = "";  // Limpa também o histórico
+    document.getElementById("display").value = "0"; // Reseta o visor
 }
 
+// Calcula a operação atual
 function calcular() {
-    let displayValue = document.getElementById("display").value;
-
+    const display = document.getElementById("display");
     try {
-        let result = eval(displayValue);
-        if (result === Infinity) {
-            document.getElementById("display").value = "Infinity";
-        } else {
-            document.getElementById("display").value = result.toFixed(2);
-        }
-        document.getElementById("history").textContent = displayValue + " = " + result.toFixed(2);
+        const resultado = eval(display.value); // Avalia a expressão
+        const operacaoCompleta = display.value + " = " + resultado; // Monta a operação completa
+        historico.push(operacaoCompleta); // Adiciona ao histórico
+        atualizar_historico(); // Atualiza a tabela do histórico
+        display.value = resultado; // Exibe o resultado no visor
     } catch (error) {
-        document.getElementById("display").value = "Erro";
+        display.value = "ERROR"; // Se ocorrer erro, exibe ERROR
     }
 }
 
-function add_numero(numero) {
-    let display = document.getElementById("display");
-    let history = document.getElementById("history");
-
-    // Limpa o histórico sempre que um número é adicionado
-    history.textContent = "";
-
-    // Se o último caractere foi um resultado (indicado por "=") ou se é "0", substitui o valor
-    if (display.value === "0" || display.value.includes("=")) {
-        display.value = numero;  // Substitui o valor anterior
-    } else {
-        display.value += numero;  // Adiciona o número normalmente
-    }
+// Atualiza o histórico na tabela
+function atualizar_historico() {
+    const historicoTabela = document.getElementById("historicoTabela").getElementsByTagName("tbody")[0];
+    historicoTabela.innerHTML = ""; // Limpa a tabela atual
+    historico.forEach((item, index) => {
+        const row = historicoTabela.insertRow(); // Cria uma nova linha
+        const cell = row.insertCell(0); // Cria uma nova célula
+        cell.textContent = item; // Adiciona o item do histórico à célula
+        cell.classList.add("historico-item"); // Adiciona a classe para estilização
+        cell.onclick = () => selecionar_historico(index); // Define a função para selecionar o histórico
+    });
 }
 
-function add_operacao(operacao) {
-    let display = document.getElementById("display");
-    let displayValue = display.value;
-    let ultimoCaractere = displayValue[displayValue.length - 1];
+// Seleciona um item do histórico e o coloca no visor
+function selecionar_historico(index) {
+    const itemHistorico = historico[index]; // Ex: "21:08:11 9 * 3 = 27"
 
-    // Se o último caractere é uma operação, substitui
-    if (['+', '-', '*', '/'].includes(ultimoCaractere)) {
-        display.value = displayValue.slice(0, -1) + operacao; // Troca a última operação
-    } else {
-        display.value += operacao;  // Adiciona nova operação
-    }
+    // Extraindo apenas a operação
+    const partes = itemHistorico.split(" = ")[0].trim(); // Obtém a parte antes do '='
+
+    // Atualiza o visor com a operação
+    document.getElementById("display").value = partes; 
 }
