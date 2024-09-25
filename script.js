@@ -1,32 +1,41 @@
 let operaçãoAtual = '';
 let historico = [];
 const tamanhoMaximoDisplay = 12; 
+let resultadoCalculado = false;
 
 function add_numero(numero) {
     const display = document.getElementById('display');
     
-    
-    if (display.value.length < tamanhoMaximoDisplay) {
-        if (display.value === '0') {
-            display.value = numero;
-        } else {
-            display.value += numero;
+    if (resultadoCalculado) {
+        display.value = numero; 
+        resultadoCalculado = false; 
+        if (display.value.length < tamanhoMaximoDisplay) {
+            if (display.value === '0') {
+                display.value = numero;
+            } else {
+                display.value += numero;
+            }
         }
     }
 }
 
 function add_operacao(operacao) {
     const display = document.getElementById('display');
+    const ultimoCaractere = display.value[display.value.length - 1];
+
     
-    
-    if (display.value.length < tamanhoMaximoDisplay) {
-        if (operaçãoAtual) {
+    if (resultadoCalculado) {
+        display.value += operacao;
+        resultadoCalculado = false;
+    } else {
+        if (['+', '-', '*', '/'].includes(ultimoCaractere)) {
             display.value = display.value.slice(0, -1) + operacao;
         } else {
             display.value += operacao;
         }
-        operaçãoAtual = operacao;
     }
+
+    operaçãoAtual = operacao;
 }
 
 function calcular() {
@@ -34,7 +43,6 @@ function calcular() {
     const expressao = display.value;
 
     try {
-        
         if (!/^[0-9+\-*/(). ]+$/.test(expressao)) {
             throw new Error("Entrada Inválida");
         }
@@ -42,7 +50,9 @@ function calcular() {
         const resultado = eval(expressao);
 
         if (!isNaN(resultado)) {
-            display.value = resultado.toFixed(2);
+            display.value = Number.isInteger(resultado) ? resultado : resultado.toFixed(2);
+            resultadoCalculado = true;
+
             const agora = new Date();
             const dataHora = agora.toLocaleString('pt-BR', {
                 day: '2-digit',
@@ -71,6 +81,7 @@ function limpar() {
     const display = document.getElementById('display');
     display.value = '0';
     operaçãoAtual = '';
+    resultadoCalculado = false; 
 }
 
 function atualizarHistorico() {
@@ -88,6 +99,7 @@ function atualizarHistorico() {
         linha.addEventListener('click', () => {
             const display = document.getElementById('display');
             display.value = item.expressao;
+            resultadoCalculado = false;
         });
 
         linha.appendChild(celulaDataHora);
