@@ -1,20 +1,22 @@
 let operaçãoAtual = '';
 let historico = [];
-const tamanhoMaximoDisplay = 12; 
+const tamanhoMaximoDisplay = 10;
 let resultadoCalculado = false;
 
 function add_numero(numero) {
     const display = document.getElementById('display');
-    
+
     if (resultadoCalculado) {
         display.value = numero; 
         resultadoCalculado = false; 
-        if (display.value.length < tamanhoMaximoDisplay) {
-            if (display.value === '0') {
-                display.value = numero;
-            } else {
-                display.value += numero;
-            }
+    } else {
+        
+        if (display.value === '0') {
+            display.value = numero;
+        } else if (display.value.length < tamanhoMaximoDisplay) {
+            display.value += numero;
+        } else {
+            display.value = "Limite Atingido!"
         }
     }
 }
@@ -23,7 +25,6 @@ function add_operacao(operacao) {
     const display = document.getElementById('display');
     const ultimoCaractere = display.value[display.value.length - 1];
 
-    
     if (resultadoCalculado) {
         display.value += operacao;
         resultadoCalculado = false;
@@ -81,7 +82,7 @@ function limpar() {
     const display = document.getElementById('display');
     display.value = '0';
     operaçãoAtual = '';
-    resultadoCalculado = false; 
+    resultadoCalculado = false;
 }
 
 function atualizarHistorico() {
